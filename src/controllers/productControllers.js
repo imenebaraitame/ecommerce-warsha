@@ -1,13 +1,18 @@
 // product related controller functions will be here
-
+import express from "express";
 import products from "../data/mockproductData.js";
+import errorMiddleware from "../middlewares/errorMiddleware.js";
+const app = express();
+
+// use error middleware
+app.use(errorMiddleware);
 
 const getProducts = (req, res) => {
   res.json(products);
 };
 
 // get product by id
-const getProductById = (req, res) => {
+const getProductById = (req, res, next) => {
   const productId = parseInt(req.params.id); // get id from url params
   const product = products.find((p) => p.id === productId);
   if (product) {
@@ -24,7 +29,7 @@ const addProduct = (req, res) => {
 
 // check body has name, price, description, category
   if (!newProduct.name) {
-    return res.status(400).json({ message: "Product name is required" });
+    errorMiddleware('ValidationError');
   }
   if (!newProduct.price) {
     return res.status(400).json({ message: "Product price is required" });

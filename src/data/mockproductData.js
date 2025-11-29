@@ -5,21 +5,24 @@ const products = [
     name: "Product 1",
     price: 29.99,
     description: "This is a great product.",
-    category: "Electronics"
+    category: "Electronics",
+    quantity: 1
   },
   {
     id: 2,
     name: "Product 2",
     price: 49.99,
     description: "This is another great product.",
-    category: "Clothing"
+    category: "Clothing",
+    quantity: 10
   },
     {
     id: 3,
     name: "Product 3",
     price: 19.99,
     description: "This is yet another great product.",
-    category: "Home"
+    category: "Home",
+    quantity: 30
   }
 ];
 

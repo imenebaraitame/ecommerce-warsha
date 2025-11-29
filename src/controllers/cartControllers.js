@@ -26,11 +26,14 @@ export const addItemToCart = (req, res) => {
     (item) => item.productId === newItem.productId
   );
 
+  if (newItem.quantity > product.quantity) {
+    return res.status(400).json({ message: "Insufficient product quantity" });
+  }
+
   if (existingItem) {
     existingItem.quantity += newItem.quantity;
   } else {
     cart.items.push(newItem);
-    console.log(cart);
   }
   
   cart.totalPrice += product.price * newItem.quantity;

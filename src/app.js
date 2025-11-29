@@ -1,14 +1,17 @@
-// const express = require('express');
 import express from 'express';
-import productRoutes from './routes/index.js';
-import categoryRoutes from "./routes/index.js";
+
+import appRoutes from "./routes/index.js";
+import loggerMiddleware from './middlewares/loggerMiddleware.js';
+import errorMiddleware from './middlewares/errorMiddleware.js';
+
 const app = express();
 
 app.use(express.json());
+app.use(loggerMiddleware);
+app.use(errorMiddleware);
 
 // routes
-app.use(productRoutes);
-app.use(categoryRoutes);
+app.use(appRoutes);
 
 // module.exports = app;
 export default app;
