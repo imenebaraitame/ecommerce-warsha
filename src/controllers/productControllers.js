@@ -1,94 +1,113 @@
-// product related controller functions will be here
+import Product from "../models/Product.js";
+
 import express from "express";
-import products from "../data/mockproductData.js";
 import errorMiddleware from "../middlewares/errorMiddleware.js";
 const app = express();
 
 // use error middleware
 app.use(errorMiddleware);
 
-const getProducts = (req, res) => {
-  res.json(products);
+const getProducts = async(req, res) => {
+  try {
+    const products = await Product.find();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" , error: error.message} );
+  }
 };
 
 // get product by id
-const getProductById = (req, res, next) => {
-  const productId = parseInt(req.params.id); // get id from url params
-  const product = products.find((p) => p.id === productId);
-  if (product) {
+const getProductById = async(req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
     res.json(product);
-  } else {
-    res.status(404).json({ message: "Product not found" });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
 
 // add a new product
-const addProduct = (req, res) => {
-  const newProduct = req.body;
-  newProduct.id = products.length + 1;
+const addProduct = async(req, res) => {
+  try {
+    const { name, price, description, category } = req.body;
+    if (!name || !price || !description || !category) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-// check body has name, price, description, category
-  if (!newProduct.name) {
-    errorMiddleware('ValidationError');
-  }
-  if (!newProduct.price) {
-    return res.status(400).json({ message: "Product price is required" });
-  }
-  if (!newProduct.category) {
-    return res.status(400).json({ message: "Product category is required" });
-  }
-
-  if (isNaN(newProduct.price)) {
-    return res.status(400).json({ message: "Product price must be a number" });
-  }
-  if (newProduct.description.length > 200) {
-    return res.status(400).json({
-      message: "Product description must be less than 200 characters",
+    if (isNaN(price)) {
+      return res.status(400).json({ message: "Product price must be a number" });
+    }
+    const newProduct = new Product({
+      name,
+      price,
+      description,
+      category,
     });
+    // check for name uniqueness
+    const existingProduct = await Product.findOne({ name: name });
+    if (existingProduct) {
+      return res.status(400).json({ message: "Product name must be unique" });
+    }
+
+    const savedProduct = await newProduct.save();
+    res.status(201).json(savedProduct);
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: "Validation Error", error: error.message });
+    }
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
 
-  products.push(newProduct);
-  res.status(201).json(newProduct);
 };
 
 // Put ,  update product
-const updateProduct = (req, res) => {
-  const productId = parseInt(req.params.id);
-  const productIndex = products.findIndex((p) => p.id === productId);
-  if (productIndex === -1) {
-    return res.status(404).json({ message: "Product not found" });
-  }
-   const { name, price, description, category } = req.body;
-
-    if (name) products[productIndex].name = name; 
-    if (price) {
-      if (isNaN(price)) {
-        return res.status(400).json({ message: "Product price must be a number" });
-      }
-        products[productIndex].price = price;
+const updateProduct = async(req, res) => {
+  try {
+    const productId = req.params.id;
+    const { name, price, description, category } = req.body;
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      { name, price, description, category },
+      { new: true, runValidators: true }
+    );
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Product not found" });
     }
-    if (description) products[productIndex].description = description;
-    if (category) products[productIndex].category = category;
-
-  res.json(products[productIndex]);
+    res.json(updatedProduct);
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: "Validation Error", error: error.message });
+    }
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
 };
 
 // delete product
-const deleteProduct = (req, res) => {
-  const productId = parseInt(req.params.id);
-  const productIndex = products.findIndex((p) => p.id === productId);
-  if (productIndex === -1) {
+const deleteProduct = async(req, res) => {
+  try {
+    const productId = req.params.id;
+  const deletedProduct = await Product.findByIdAndDelete(productId);
+  if (!deletedProduct) {
     return res.status(404).json({ message: "Product not found" });
   }
-  products.splice(productIndex, 1);
   res.json({ message: "Product deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
 };
 
 // get products by category
-const getProductsByCategory = (req, res) => {
-  const category = req.params.category.toLowerCase();
-  const filteredProducts = products.filter((p) => p.category.toLowerCase() === category);
-  res.json(filteredProducts);
+const getProductsByCategory = async(req, res) => {
+  try {
+    const category = req.params.category.toLowerCase();
+    const filteredProducts = await Product.find({ category: { $regex: category, $options: 'i' } }); // case-insensitive search
+    res.json(filteredProducts);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
 };
 
 export { getProducts, getProductById, addProduct, updateProduct, deleteProduct, getProductsByCategory };
