@@ -1,14 +1,13 @@
 import express from 'express';
 
 import appRoutes from "./routes/index.js";
-import loggerMiddleware from './middlewares/loggerMiddleware.js';
-import errorMiddleware from './middlewares/errorMiddleware.js';
+import connectDB from "./config/database.js";
 
 const app = express();
 
 app.use(express.json());
-app.use(loggerMiddleware);
-app.use(errorMiddleware);
+// connect to database
+connectDB();
 
 // routes
 app.use(appRoutes);
