@@ -22,7 +22,7 @@ const addProduct = (req, res) => {
   const newProduct = req.body;
   newProduct.id = products.length + 1;
 
-  //check body has name, price, description, category
+// check body has name, price, description, category
   if (!newProduct.name) {
     return res.status(400).json({ message: "Product name is required" });
   }
@@ -47,7 +47,6 @@ const addProduct = (req, res) => {
 };
 
 // Put ,  update product
-
 const updateProduct = (req, res) => {
   const productId = parseInt(req.params.id);
   const productIndex = products.findIndex((p) => p.id === productId);
@@ -80,4 +79,11 @@ const deleteProduct = (req, res) => {
   res.json({ message: "Product deleted successfully" });
 };
 
-export { getProducts, getProductById, addProduct, updateProduct, deleteProduct };
+// get products by category
+const getProductsByCategory = (req, res) => {
+  const category = req.params.category.toLowerCase();
+  const filteredProducts = products.filter((p) => p.category.toLowerCase() === category);
+  res.json(filteredProducts);
+};
+
+export { getProducts, getProductById, addProduct, updateProduct, deleteProduct, getProductsByCategory };
