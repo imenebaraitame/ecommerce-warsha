@@ -1,4 +1,4 @@
-import Product from "../models/Product.js";
+import Product from "../models/product.js";
 
 import express from "express";
 import errorMiddleware from "../middlewares/errorMiddleware.js";
@@ -89,11 +89,11 @@ const updateProduct = async(req, res) => {
 const deleteProduct = async(req, res) => {
   try {
     const productId = req.params.id;
-  const deletedProduct = await Product.findByIdAndDelete(productId);
-  if (!deletedProduct) {
-    return res.status(404).json({ message: "Product not found" });
-  }
-  res.json({ message: "Product deleted successfully" });
+    const deletedProduct = await Product.findByIdAndDelete(productId);
+    if (!deletedProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    res.json({ message: "Product deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
