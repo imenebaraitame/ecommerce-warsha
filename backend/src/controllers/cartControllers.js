@@ -1,20 +1,22 @@
 import Cart from "../models/cart.js";
 import Product from "../models/product.js";
-import express from "express";
-import errorMiddleware from "../middlewares/errorMiddleware.js";
-const app = express();
 
-// use error middleware
-app.use(errorMiddleware);
+
 
 // get cart
-export const getCart = async(req, res) => {
- try {
-    const cart = await Cart.find();
-    res.json(cart);
- } catch (error) {
-    res.status(500).json({ message: "Server Error" , error: error.message} );
- }
+export const getCartById = async (req, res, next) => {
+    try {
+        const cart = await Cart.findById(req.params.cartId).populate('items.product');
+        if (!cart) {
+            const error = new Error("Cart not found");
+            error.status = 404;
+            error.message = "Cart not found";
+            throw error;
+        }
+        res.json(cart);
+    } catch (error) {
+        next(error);
+    }
 };
 
 // add item to cart
