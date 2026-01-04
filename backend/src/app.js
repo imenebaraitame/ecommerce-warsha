@@ -3,6 +3,7 @@ import express from 'express';
 import appRoutes from "./routes/index.js";
 import connectDB from "./config/database.js";
 import errorMiddleware from "./middlewares/errorMiddleware.js";
+import dotenv from "dotenv";
 import cors from "cors";
 
 const app = express();
