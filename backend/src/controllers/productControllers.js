@@ -1,12 +1,7 @@
 import Product from "../models/product.js";
 
-import express from "express";
-import errorMiddleware from "../middlewares/errorMiddleware.js";
-const app = express();
 
-// use error middleware
-app.use(errorMiddleware);
-
+//get all products
 const getProducts = async(req, res, next) => {
   try {
     const products = await Product.find();
@@ -122,4 +117,34 @@ const getProductsByCategory = async(req, res, next) => {
   }
 };
 
-export { getProducts, getProductById, addProduct, updateProduct, deleteProduct, getProductsByCategory };
+//get product by (name) or by category, name and category
+const searchProductByFilters = async (req, res, next) => {
+  try {
+    const {name, category ,minPrice, maxPrice } = req.query;
+
+    const query = {};
+
+    // Name filter
+    if (name) {
+      query.name = { $regex: name, $options: "i" };
+    }
+    // Category filter
+    if (category) {
+      query.category = { $regex: category, $options: "i" };
+    }
+    // Price filter
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
+
+    const products = await Product.find(query);
+    res.json(products);
+
+  }catch (error) {
+    next(error);
+  }
+}
+
+export { getProducts, getProductById, addProduct, updateProduct, deleteProduct, getProductsByCategory, searchProductByFilters };
