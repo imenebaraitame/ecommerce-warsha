@@ -14,7 +14,7 @@ const getCategories = async(req, res) => {
 // Get category by id
 const getCategoryById = async(req, res, next) => {
   try {
-    const category = Category.findById(req.params.id);
+    const category = await Category.findById(req.params.id);
   
     if (!category) {
       const error = new Error("Category not found");
@@ -92,7 +92,7 @@ try {
     }
     res.json({ message: "Category deleted successfully" });
 } catch (error) {
-  next(error);
+  next(error)
 }
 };
 
