@@ -7,8 +7,8 @@ function Home() {
 
     useEffect(() => {
         const controller = new AbortController();
-        // axios.get('http://localhost:5000/api/products/', { signal: controller.signal })
-        axios.get('https://fakestoreapi.com/products', { signal: controller.signal })
+        axios.get('http://localhost:3000/api/products/', { signal: controller.signal })
+        //axios.get('https://fakestoreapi.com/products', { signal: controller.signal })
             .then(res => setProducts(res.data)
             )
             .catch(err => {
@@ -37,8 +37,8 @@ function Home() {
                     {errors && <p>{errors} </p>}
                     <ul>
                         {products.map((product) => (
-                            <li key={product.id}>
-                                {product.title} 
+                            <li key={product._id}>
+                                {product.name} 
                             </li>
                         ))}
                     </ul>
