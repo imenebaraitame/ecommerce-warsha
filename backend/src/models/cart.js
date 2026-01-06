@@ -2,9 +2,15 @@ import mongoose from "mongoose";
 
 const cartSchema = new mongoose.Schema(
     {
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,  
+            unique: true,    
+        },
         items: [
             {
-                productId: {
+                product: {
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'Product',
                     required: true,
@@ -14,16 +20,21 @@ const cartSchema = new mongoose.Schema(
                     required: true,
                     min: [1, 'Quantity must be at least 1'],
                 },
+                price: {
+                    type: Number,
+                    required: true,
+                    min: [0, 'Price cannot be negative'],
+                }
             }
         ],
-        totalPrice: {
+        total: {
             type: Number,
             required: true,
-            min: [0, 'Total price cannot be negative'],
+            min: [0, 'Total cannot be negative'],
             default: 0,
         },
     },
-    { timestamps: true } // automatically manage createdAt and updatedAt fields
+    { timestamps: true }
 );
 
 const Cart = mongoose.model('Cart', cartSchema);

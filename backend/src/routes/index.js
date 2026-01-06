@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.use('/api/products', productRoutes);
 router.use('/api/categories', categoriesRoutes);
-router.use('/api/cart', cartRoutes);
+router.use('/api/carts', cartRoutes);
 
 
 export default router
