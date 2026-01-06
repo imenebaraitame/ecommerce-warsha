@@ -4,7 +4,7 @@ import Product from "../models/product.js";
 // Get user's cart (or create if doesn't exist)
 export const getCart = async (req, res, next) => {
     try {
-        const userId = req.user.id; // From authenticationToken middleware
+        const userId = req.user.userId; // From authenticationToken middleware
         
         let cart = await Cart.findOne({ userId }).populate('items.product');
         
@@ -23,7 +23,7 @@ export const getCart = async (req, res, next) => {
 // Add item to cart
 export const addItemToCart = async (req, res, next) => {
     try {
-        const userId = req.user.id; // From authenticationToken middleware
+        const userId = req.user.userId; // From authenticationToken middleware
         const { productId, quantity } = req.body;
 
         // Validation
@@ -106,7 +106,7 @@ export const addItemToCart = async (req, res, next) => {
 // Update item quantity in cart
 export const updateItemQuantity = async (req, res, next) => {
     try {
-        const userId = req.user.id; // From authenticationToken middleware
+        const userId = req.user.userId; // From authenticationToken middleware
         const { productId } = req.params;
         const { quantity } = req.body;
 
@@ -172,7 +172,7 @@ export const updateItemQuantity = async (req, res, next) => {
 // Delete item from cart
 export const deleteItemFromCart = async (req, res, next) => {
     try {
-        const userId = req.user.id; // From authenticationToken middleware
+        const userId = req.user.userId; // From authenticationToken middleware
         const { productId } = req.params;
 
         // Find user's cart
@@ -218,7 +218,7 @@ export const deleteItemFromCart = async (req, res, next) => {
 // Clear all items from cart
 export const clearCart = async (req, res, next) => {
     try {
-        const userId = req.user.id; // From authenticationToken middleware
+        const userId = req.user.userId; // From authenticationToken middleware
 
         const cart = await Cart.findOne({ userId });
         if (!cart) {
