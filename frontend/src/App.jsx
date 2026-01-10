@@ -10,6 +10,7 @@ import Cart from './components/Cart';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Categories from './components/Categories';
+import Dashboard from './components/Dashboard';
 import './App.css';
 
 
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/categories" element={<Categories />} />
+                <Route path= "/dashboard" element={<Dashboard />} />
               </Routes>
             </div>
           </Router>

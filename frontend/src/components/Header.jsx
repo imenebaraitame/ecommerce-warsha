@@ -43,6 +43,12 @@ const Header = () => {
             >
               Categories
             </Link>
+            <Link 
+              to="/dashboard" 
+              className="text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
+            >
+              Dashboard
+            </Link>
             
             {isAuthenticated ? (
               <>
@@ -160,6 +166,13 @@ const Header = () => {
               className="block text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
             >
               Categories
+            </Link>
+            <Link 
+              to="/dashboard" 
+              onClick={() => setIsMenuOpen(false)}
+              className="block text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
+            >
+              Dashboard
             </Link>
             
             {isAuthenticated ? (
