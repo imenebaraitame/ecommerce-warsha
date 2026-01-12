@@ -1,5 +1,3 @@
-
-import Home from './components/Home';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -11,6 +9,7 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Categories from './components/Categories';
 import Dashboard from './components/Dashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 
@@ -20,7 +19,7 @@ function App() {
   return (
     <>
       {/* <Home /> */}
-        <AuthProvider>
+      <AuthProvider>
         <CartProvider>
           <Router>
             <div className="min-h-screen">
@@ -32,7 +31,10 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/categories" element={<Categories />} />
-                <Route path= "/dashboard" element={<Dashboard />} />
+                {/* ProtectedRoutes */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path= "/dashboard" element={<Dashboard />} />
+                </Route>
               </Routes>
             </div>
           </Router>
