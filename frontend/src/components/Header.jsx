@@ -1,4 +1,4 @@
-import { useState,  useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -61,14 +61,19 @@ const Header = () => {
             >
               Categories
             </Link>
-            <Link
-              to="/dashboard"
-              className="text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
-            >
-              Dashboard
-            </Link>
+            
+            {/* Show Dashboard only for admin users */}
+            {isAuthenticated && user?.role === "admin" && (
+              <Link
+                to="/dashboard"
+                className="text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
+              >
+                Dashboard
+              </Link>
+            )}
 
             {isAuthenticated ? (
+
               <>
                 <Link
                   to="/cart"
@@ -94,7 +99,7 @@ const Header = () => {
                   )}
                 </Link>
                 <div className="relative" ref={menuRef}>
-                  <button 
+                  <button
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                     className="flex items-center space-x-2 text-lg hover:text-purple-300 transition-colors duration-300 font-medium">
                     <span>{user?.name}</span>
@@ -115,7 +120,7 @@ const Header = () => {
                   {isMenuOpen && (
                     <div
                       className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl transition-all duration-300 border border-purple-500/30 z-50"
-                      >
+                    >
                       <button
                         onClick={handleLogout}
                         className="block w-full text-left px-4 py-3 text-sm hover:bg-gray-200/30 transition-colors rounded-lg"

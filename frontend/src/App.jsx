@@ -1,4 +1,4 @@
-import {Navigate, BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Navigate, BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
@@ -14,7 +14,7 @@ import './App.css';
 
 
 function App() {
- 
+
 
   return (
     <>
@@ -26,18 +26,16 @@ function App() {
               <Header />
               <Routes>
                 <Route path="/" element={<ProductList />} />
-
+                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="/categories" element={<Categories />} />
+                <Route path="/product/:id" element={<ProductDetail />} />
+                <Route path="/cart" element={<Cart />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-          
 
                 {/* ProtectedRoutes */}
                 <Route element={<ProtectedRoute />}>
-                  <Route path="/categories" element={<Categories />} />
-                  <Route path="/product/:id" element={<ProductDetail />} />
-                  <Route path="/cart" element={<Cart />} />
-
-                  <Route path= "/dashboard" element={<Dashboard />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
                 </Route>
               </Routes>
             </div>
