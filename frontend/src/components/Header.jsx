@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState,  useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -7,7 +7,25 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const { getCartItemsCount } = useCart();
+  const menuRef = useRef(null);
   const navigate = useNavigate();
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen]);
 
   const handleLogout = () => {
     logout();
@@ -22,8 +40,8 @@ const Header = () => {
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="text-3xl font-bold bg-clip-text text-black hover:scale-105 transition-transform duration-300"
           >
             Shop
@@ -31,42 +49,42 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
             >
               Shop
             </Link>
-            <Link 
-              to="/categories" 
+            <Link
+              to="/categories"
               className="text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
             >
               Categories
             </Link>
-            <Link 
-              to="/dashboard" 
+            <Link
+              to="/dashboard"
               className="text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
             >
               Dashboard
             </Link>
-            
+
             {isAuthenticated ? (
               <>
-                <Link 
-                  to="/cart" 
+                <Link
+                  to="/cart"
                   className="relative hover:scale-110 transition-transform duration-300"
                 >
-                  <svg 
-                    className="w-7 h-7" 
-                    fill="none" 
-                    stroke="currentColor" 
+                  <svg
+                    className="w-7 h-7"
+                    fill="none"
+                    stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" 
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                     />
                   </svg>
                   {cartCount > 0 && (
@@ -75,43 +93,49 @@ const Header = () => {
                     </span>
                   )}
                 </Link>
-                <div className="relative group">
-                  <button className="flex items-center space-x-2 text-lg hover:text-purple-300 transition-colors duration-300 font-medium">
+                <div className="relative" ref={menuRef}>
+                  <button 
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    className="flex items-center space-x-2 text-lg hover:text-purple-300 transition-colors duration-300 font-medium">
                     <span>{user?.name}</span>
-                    <svg 
-                      className="w-4 h-4" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M19 9l-7 7-7-7" 
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
                       />
                     </svg>
                   </button>
-                  <div className="absolute right-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border border-purple-500/30">
-                    <button
-                      onClick={handleLogout}
-                      className="block w-full text-left px-4 py-3 text-sm hover:bg-purple-600/30 transition-colors rounded-lg"
-                    >
-                      Logout
-                    </button>
-                  </div>
+                  {isMenuOpen && (
+                    <div
+                      className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl transition-all duration-300 border border-purple-500/30 z-50"
+                      >
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-3 text-sm hover:bg-gray-200/30 transition-colors rounded-lg"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
                 </div>
               </>
             ) : (
               <>
-                <Link 
-                  to="/login" 
+                <Link
+                  to="/login"
                   className="text-lg hover:text-purple-300 transition-colors font-medium"
                 >
                   Login
                 </Link>
-                <Link 
-                  to="/signup" 
+                <Link
+                  to="/signup"
                   className="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-2 rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-300 font-semibold shadow-lg hover:shadow-pink-500/50"
                 >
                   Sign Up
@@ -125,25 +149,25 @@ const Header = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden focus:outline-none"
           >
-            <svg 
-              className="w-7 h-7" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="w-7 h-7"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
               {isMenuOpen ? (
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M6 18L18 6M6 6l12 12" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
                 />
               ) : (
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M4 6h16M4 12h16M4 18h16" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
                 />
               )}
             </svg>
@@ -153,32 +177,32 @@ const Header = () => {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4 space-y-4 animate-fadeIn">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               onClick={() => setIsMenuOpen(false)}
               className="block text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
             >
               Shop
             </Link>
-            <Link 
-              to="/categories" 
+            <Link
+              to="/categories"
               onClick={() => setIsMenuOpen(false)}
               className="block text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
             >
               Categories
             </Link>
-            <Link 
-              to="/dashboard" 
+            <Link
+              to="/dashboard"
               onClick={() => setIsMenuOpen(false)}
               className="block text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
             >
               Dashboard
             </Link>
-            
+
             {isAuthenticated ? (
               <>
-                <Link 
-                  to="/cart" 
+                <Link
+                  to="/cart"
                   onClick={() => setIsMenuOpen(false)}
                   className="flex items-center space-x-2 text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
                 >
@@ -201,15 +225,15 @@ const Header = () => {
               </>
             ) : (
               <>
-                <Link 
-                  to="/login" 
+                <Link
+                  to="/login"
                   onClick={() => setIsMenuOpen(false)}
                   className="block text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
                 >
                   Login
                 </Link>
-                <Link 
-                  to="/signup" 
+                <Link
+                  to="/signup"
                   onClick={() => setIsMenuOpen(false)}
                   className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-2 rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-300 font-semibold shadow-lg"
                 >
