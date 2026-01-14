@@ -1,5 +1,5 @@
 //import { useNavigate } from 'react-router-dom';
-import { Package, User, Tags, Plus, Pen, Trash2, X } from "lucide-react";
+import { Package, User, Tags, Plus, Pen, Trash2} from "lucide-react";
 import { useState } from "react";
 import ProductModal from "./productModal";
 
@@ -41,7 +41,10 @@ const Dashboard = () => {
                 <h3 className="mb-1 text-[1.2rem] font-bold text-gray-800">
                   Products Management
                 </h3>
-                <button className="flex cursor-pointer rounded-lg bg-green-600 p-2 text-[1rem] font-medium text-white hover:bg-green-700 sm:px-6">
+                <button 
+                  onClick={() => {setOpenProModal(true)}}
+                  className="flex cursor-pointer rounded-lg bg-green-600 p-2 text-[1rem] font-medium text-white hover:bg-green-700 sm:px-6"
+                >
                   <Plus />
                   Add New Product
                 </button>
@@ -145,12 +148,8 @@ const Dashboard = () => {
             </form>
           </div>
         </div>
-        {/* Header */}
-        {/* <div className="text-center mb-12 animate-fadeIn">
-          <h1 className="text-6xl font-bold mb-4 bg-clip-text text-black">
-            Browse Categories
-          </h1>
-        </div> */}
+       
+      
 
         {/* Back Button */}
         {/* <div className="text-center mt-12">
