@@ -1,12 +1,44 @@
 //import { useNavigate } from 'react-router-dom';
 import { Package, User, Tags, Plus, Pen, Trash2} from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProductModal from "./productModal";
-
+import { API_ENDPOINTS } from "../config/api";
+import axios from "axios";
 
 const Dashboard = () => {
   //   const navigate = useNavigate();
-   const [openProModal, setOpenProModal] = useState(false);
+  const [openProModal, setOpenProModal] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        const response = await axios.get(API_ENDPOINTS.PRODUCTS);
+        setProducts(response.data);
+      } catch (err) {
+        setError('Failed to load products. Please try again.');
+        console.error('Error fetching products:', err);
+      } finally {
+      setLoading(false);
+    }
+    };
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  if (loading && products.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 pt-24 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500 mx-auto"></div>
+          <p className="text-white mt-4 text-xl">Loading products...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-30 pb-12">
@@ -41,8 +73,8 @@ const Dashboard = () => {
                 <h3 className="mb-1 text-[1.2rem] font-bold text-gray-800">
                   Products Management
                 </h3>
-                <button 
-                  onClick={() => {setOpenProModal(true)}}
+                <button
+                  onClick={() => { setOpenProModal(true) }}
                   className="flex cursor-pointer rounded-lg bg-green-600 p-2 text-[1rem] font-medium text-white hover:bg-green-700 sm:px-6"
                 >
                   <Plus />
@@ -51,9 +83,10 @@ const Dashboard = () => {
               </div>
 
               <div>
-                <div class="loading">Loading products...</div>
+                <div className="loading">Loading products...</div>
               </div>
               <div className="flex flex-col overflow-hidden rounded-2xl border border-white/5">
+                 {error && <p className="text-red-600">{error}</p>}
                 <table className="w-full border-collapse text-left">
                   <thead>
                     <tr className="border-b border-b-purple-300 bg-gray-200">
@@ -78,31 +111,35 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b border-b-purple-300 hover:bg-gray-100">
-                      <td className="px-6 py-4">Table</td>
-                      <td className="px-6 py-4"> table of ckitchen</td>
-                      <td className="px-6 py-4">furniture</td>
-                      <td className="px-6 py-4">$454</td>
-                      <td className="px-6 py-4">120</td>
-                      <td className="flex items-center justify-center gap-2 px-6 py-4">
-                        <button
-                          className="rounded-lg p-2 text-purple-800 transition-all hover:bg-emerald-500/10 hover:text-emerald-400"
-                          title="Edit"
-                          onClick={() => {setOpenProModal(true)}}
-                        >
-                          <Pen size={16} />
-                        </button>
-                        {openProModal && <ProductModal closeProModal={setOpenProModal} />}
-                        <button
-                          className="rounded-lg p-2 text-purple-800 transition-all hover:bg-red-500/10 hover:text-red-400"
-                          title="Delete"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </td>
-                    </tr>
+                    {products.map((product) => (
+                      <tr key={product._id} className="border-b border-b-purple-300 hover:bg-gray-100">
+                        <td className="px-6 py-4">{product.name}</td>
+                        <td className="px-6 py-4">{product.description}</td>
+                        <td className="px-6 py-4">{product.category}</td>
+                        <td className="px-6 py-4">{product.price} DA</td>
+                        <td className="px-6 py-4">{product.quantity}</td>
+
+                        <td className="flex items-center justify-center gap-2 px-6 py-4">
+                          <button
+                            className="rounded-lg p-2 text-purple-800 transition-all hover:bg-emerald-500/10 hover:text-emerald-400"
+                            title="Edit"
+                            onClick={() => { setOpenProModal(true) }}
+                          >
+                            <Pen size={16} />
+                          </button>
+                          
+                          <button
+                            className="rounded-lg p-2 text-purple-800 transition-all hover:bg-red-500/10 hover:text-red-400"
+                            title="Delete"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
+                {openProModal && <ProductModal closeProModal={setOpenProModal} refreshProducts={fetchProducts} />}
               </div>
             </div>
 
@@ -130,7 +167,7 @@ const Dashboard = () => {
           </div>
         </section>
 
-       
+
 
         {/* Add/Edit Category Modal */}
         <div>
@@ -148,8 +185,8 @@ const Dashboard = () => {
             </form>
           </div>
         </div>
-       
-      
+
+
 
         {/* Back Button */}
         {/* <div className="text-center mt-12">

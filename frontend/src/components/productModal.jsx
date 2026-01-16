@@ -5,7 +5,7 @@ import axios from 'axios';
 
 
 
-function ProductModal({ closeProModal }) {
+function ProductModal({ closeProModal, refreshProducts }) {
 
     const [categories, setCategories] = useState([]);
     const [inputValues, setInputValues] = useState({
@@ -16,7 +16,7 @@ function ProductModal({ closeProModal }) {
         quantity: ""
     }
     );
-
+    
     const handleChange = (e) => {
         const name = e.target.name;
         const value = e.target.value;
@@ -48,9 +48,11 @@ function ProductModal({ closeProModal }) {
             }, {
                 headers: { "Content-Type": "application/json" },
             })
-                .then((response) => {
-                    console.log(response);
-                });
+                // .then((response) => {
+                //     console.log(response);
+                // });
+                refreshProducts();
+                closeProModal(false);   
         } catch (e) {
             console.log(e);
         }
