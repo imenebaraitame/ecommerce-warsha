@@ -29,6 +29,16 @@ const productSchema = new mongoose.Schema(
       min: [0, "Product quantity cannot be negative"],
       default: 0,
     },
+    image: {
+      url: {
+        type: String,
+        default: null
+      },
+      publicId: {
+        type: String,
+        default: null
+      }
+    }
   },
   { timestamps: true } // automatically manage createdAt and updatedAt fields
 );
