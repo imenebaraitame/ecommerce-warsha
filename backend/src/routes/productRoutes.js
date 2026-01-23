@@ -10,6 +10,7 @@ import {
   getProductsByCategory,
   searchProductByFilters
 } from "../controllers/productControllers.js";
+import { upload } from '../config/cloudinary.js'; 
 
 const router = express.Router();
 
@@ -19,9 +20,9 @@ router.get("/search", searchProductByFilters);// localhost:5000/api/products/sea
 
 router.get("/:id", getProductById); // localhost:5000/api/products/:id
 
-router.post("/", addProduct); // localhost:5000/api/products
+router.post("/", upload.single('image'), addProduct); // localhost:5000/api/products
 
-router.put("/:id", updateProduct); // localhost:5000/api/products/:id
+router.put("/:id", upload.single('image'), updateProduct); // localhost:5000/api/products/:id
 
 router.delete("/:id", deleteProduct); // localhost:5000/api/products/:id
 

@@ -1,3 +1,4 @@
+import { cloudinary } from "../config/cloudinary.js";
 import Product from "../models/product.js";
 
 
@@ -31,7 +32,11 @@ const getProductById = async(req, res, next) => {
 // add a new product
 const addProduct = async(req, res, next) => {
   try {
+    console.log('Request Body:', req.body);
+    console.log('Request File:', req.file);
+    
     const { name, price, description, category, quantity } = req.body;
+
     if (!name || !price || !description || !category || !quantity) {
       const error = new Error("All fields are required");
       error.status = 400;
@@ -43,25 +48,53 @@ const addProduct = async(req, res, next) => {
       error.status = 400;
       throw error; 
     }
-    const newProduct = new Product({
-      name,
-      price,
-      description,
-      category,
-      quantity
-    });
-    // check for name uniqueness
+     // check for name uniqueness
     const existingProduct = await Product.findOne({ name: name });
     if (existingProduct) {
+      if(req.file && req.file.public_id) {
+        await cloudinary.uploader.destroy(req.file.public_id);
+      }
       const error = new Error("product name must be unique");
       error.status = 400;
       error.message = "Product name must be unique";
       throw error;  
     }
+    const productData = {
+      name,
+      price,
+      description,
+      category,
+      quantity
+    }
+    
+    if(req.file) {
+      console.log('Image uploaded to Cloudinary');
+      console.log('   URL:', req.file.path);
+      console.log('   Public ID:', req.file.filename);
 
+      productData.image = {
+        url: req.file.path,
+        publicId: req.file.filename
+      };
+    } else {
+      console.log('No image uploaded');
+    }
+    const newProduct = new Product(productData);
     const savedProduct = await newProduct.save();
+    console.log('Product saved successfully:', savedProduct._id);
+
     res.status(201).json(savedProduct);
   } catch (error) {
+    console.error('Error in addProduct:', error.message);
+    console.error('Stack:', error.stack);
+    if (req.file) {
+      try {
+        await cloudinary.uploader.destroy(req.file.filename);
+        console.log('Cleaned up uploaded image from Cloudinary');
+      } catch (cleanupError) {
+        console.error('Error cleaning up uploaded image:', cleanupError);
+      }
+    }
     next(error);
   }
 
@@ -70,37 +103,80 @@ const addProduct = async(req, res, next) => {
 // Put ,  update product
 const updateProduct = async(req, res, next) => {
   try {
-    const productId = req.params.id;
+    const { id } = req.params;
     const { name, price, description, category, quantity } = req.body;
-    const updatedProduct = await Product.findByIdAndUpdate(
-      productId,
-      { name, price, description, category, quantity },
-      { new: true, runValidators: true }
-    );
-    if (!updatedProduct) {
+
+    console.log('Updating product:', id);
+    console.log('Update data:', req.body);
+    console.log('New image:', req.file);
+
+    // Find existing product
+    const product = await Product.findById(id);
+
+    if (!product) {
+      if (req.file) {
+        await cloudinary.uploader.destroy(req.file.filename);
+      }
       const error = new Error("Product not found");
       error.status = 404;
-      error.message = "Product not found";
       throw error;
     }
-    res.json(updatedProduct);
+
+    // Update fields
+    if (name) product.name = name;
+    if (price) product.price = price;
+    if (description) product.description = description;
+    if (category) product.category = category;
+    if (quantity !== undefined) product.quantity = quantity;
+
+    // Handle image update
+    if (req.file) {
+      // Delete old image from Cloudinary if it exists
+      if (product.image && product.image.publicId) {
+        await cloudinary.uploader.destroy(product.image.publicId);
+      }
+      
+      // Update with new image
+      product.image = {
+        url: req.file.path,
+        publicId: req.file.filename
+      };
+    }
+
+    const updatedProduct = await product.save();
+    res.status(200).json(updatedProduct);
   } catch (error) {
+    if (req.file) {
+      try {
+        await cloudinary.uploader.destroy(req.file.filename);
+      } catch (cleanupError) {
+        console.error('Error cleaning up uploaded image:', cleanupError);
+      }
+    }
     next(error);
   }
 };
 
+
 // delete product
 const deleteProduct = async(req, res, next) => {
   try {
-    const productId = req.params.id;
-    const deletedProduct = await Product.findByIdAndDelete(productId);
-    if (!deletedProduct) {
+    const { id } = req.params;
+    
+    const product = await Product.findById(id);
+    if (!product) {
       const error = new Error("Product not found");
       error.status = 404;
-      error.message = "Product not found";
       throw error;
     }
-    res.json({ message: "Product deleted successfully" });
+
+    // Delete image from Cloudinary if it exists
+    if (product.image && product.image.publicId) {
+      await cloudinary.uploader.destroy(product.image.publicId);
+    }
+
+    await Product.findByIdAndDelete(id);
+    res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
     next(error);
   }
