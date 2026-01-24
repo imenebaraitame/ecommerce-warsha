@@ -1,7 +1,7 @@
 //import { useNavigate } from 'react-router-dom';
 import { Package, User, Tags, Plus, Pen, Trash2} from "lucide-react";
 import { useState, useEffect } from "react";
-import ProductModal from "./productModal";
+import ProductModal from "./ProductModal";
 import { API_ENDPOINTS } from "../config/api";
 import axios from "axios";
 
@@ -31,7 +31,7 @@ const Dashboard = () => {
 
   if (loading && products.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 pt-24 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 pt-24 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500 mx-auto"></div>
           <p className="text-white mt-4 text-xl">Loading products...</p>
@@ -153,7 +153,7 @@ const Dashboard = () => {
               </div>
 
               <div>
-                <div class="loading">Loading categories...</div>
+                <div className="loading">Loading categories...</div>
               </div>
             </div>
 
@@ -161,7 +161,7 @@ const Dashboard = () => {
             <div>
               <h3>Users List</h3>
               <div>
-                <div class="loading">Loading users...</div>
+                <div className="loading">Loading users...</div>
               </div>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Upload, Image as ImageIcon } from "lucide-react";
 import { API_ENDPOINTS } from "../config/api";
 import axios from 'axios';
 
@@ -8,19 +8,20 @@ import axios from 'axios';
 function ProductModal({ closeProModal, refreshProducts }) {
 
     const [categories, setCategories] = useState([]);
-    const [inputValues, setInputValues] = useState({
+    const [imagePreview, setImagePreview] = useState(null);
+    const [formData, setFormData] = useState({
         name: "",
         price: "",
         category: "",
         description: "",
-        quantity: ""
+        quantity: "",
+        image: null
     }
     );
     
     const handleChange = (e) => {
-        const name = e.target.name;
-        const value = e.target.value;
-        setInputValues(values => ({ ...values, [name]: value }));
+        const { name, value } = e.target;
+        setFormData(values => ({ ...values, [name]: value }));
     }
 
     const fetchCategories = async () => {
@@ -36,32 +37,57 @@ function ProductModal({ closeProModal, refreshProducts }) {
         fetchCategories();
     }, []);
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+       //Todo: validate file type
+       //Todo: validate file size
+       setFormData(values => ({ ...values, image: file })); 
+       if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+       }
+    }
+
+    const removeImage = () => {
+        setFormData(values => ({ ...values, image: null }));
+        setImagePreview(null);
+        // Reset the file input
+        const fileInput = document.querySelector('input[type="file"]');
+        if (fileInput) fileInput.value = '';
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            await axios.post(API_ENDPOINTS.PRODUCTS, {
-                ...inputValues,
-                price: Number(inputValues.price),
-                quantity: Number(inputValues.quantity),
-            }, {
-                headers: { "Content-Type": "application/json" },
-            })
-                // .then((response) => {
-                //     console.log(response);
-                // });
+             // Create FormData object for file upload
+            const submitData = new FormData();
+            submitData.append('name', formData.name);
+            submitData.append('price', Number(formData.price));
+            submitData.append('category', formData.category);
+            submitData.append('description', formData.description);
+            submitData.append('quantity', Number(formData.quantity));
+
+            if (formData.image) {
+                submitData.append('image', formData.image);
+            }
+            await axios.post(API_ENDPOINTS.PRODUCTS, submitData, {
+                headers: { "Content-Type": "multipart/form-data"  },
+            });
                 refreshProducts();
                 closeProModal(false);   
         } catch (e) {
-            console.log(e);
+            console.error("Error submitting product:", e);
         }
     }
 
 
     return (
         <div className="bg-opacity-25 fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/50 sm:p-6">
-            <div className="relative w-full max-w-125 overflow-hidden rounded-4xl border border-white/10 bg-white p-7 shadow-2xl">
+            <div className="relative w-full max-w-125 overflow-hidden rounded-4xl border border-white/10 bg-white p-7 shadow-2xl max-h-[90vh] overflow-y-auto">
                 <div className="flex justify-between">
                     <h2 className="mb-6 text-[1.4rem] font-bold">Add New Product</h2>
                     <button
@@ -83,7 +109,7 @@ function ProductModal({ closeProModal, refreshProducts }) {
                             type="text"
                             required
                             name="name"
-                            value={inputValues.name}
+                            value={formData.name}
                             onChange={handleChange}
                             className="h-12 w-full rounded-lg border-2 border-purple-700/20 pr-6 pl-10 text-[17px] font-bold text-black outline-purple-600 transition-all"
                         />
@@ -98,12 +124,12 @@ function ProductModal({ closeProModal, refreshProducts }) {
                         <input
                             type="number"
                             name="price"
-                            value={inputValues.price}
+                            value={formData.price}
                             onChange={handleChange}
                             step="0.01"
                             min="0"
                             required
-                            className="h-12 w-full rounded-[8px] border-2 border-purple-700/20 pr-6 pl-10 text-[17px] font-bold text-black outline-purple-600 transition-all"
+                            className="h-12 w-full rounded-lg border-2 border-purple-700/20 pr-6 pl-10 text-[17px] font-bold text-black outline-purple-600 transition-all"
                         />
                     </div>
                     <div>
@@ -117,7 +143,7 @@ function ProductModal({ closeProModal, refreshProducts }) {
                             required
                             id="category-select"
                             name="category"
-                            value={inputValues.category}
+                            value={formData.category}
                             onChange={handleChange}
                         >
                             <option value=""> Select a category</option>
@@ -138,9 +164,9 @@ function ProductModal({ closeProModal, refreshProducts }) {
                             type="text"
                             required
                             name="description"
-                            value={inputValues.description}
+                            value={formData.description}
                             onChange={handleChange}
-                            className="h-20 w-full rounded-[8px] border-2 border-purple-700/20 pr-6 pl-10 text-[17px] font-bold text-black outline-purple-600 transition-all"
+                            className="h-20 w-full rounded-lg border-2 border-purple-700/20 pr-6 pl-10 text-[17px] font-bold text-black outline-purple-600 transition-all"
                         />
                     </div>
                     <div>
@@ -155,10 +181,60 @@ function ProductModal({ closeProModal, refreshProducts }) {
                             min="0"
                             required
                             name="quantity"
-                            value={inputValues.quantity}
+                            value={formData.quantity}
                             onChange={handleChange}
-                            className="h-12 w-full rounded-[8px] border-2 border-purple-700/20 pr-6 pl-10 text-[17px] font-bold text-black outline-purple-600 transition-all"
+                            className="h-12 w-full rounded-lg border-2 border-purple-700/20 pr-6 pl-10 text-[17px] font-bold text-black outline-purple-600 transition-all"
                         />
+                    </div>
+                    <div>
+                        <label
+                            htmlFor="productImage"
+                            className="text-[1.1rem] font-medium mb-2 block"
+                        >
+                            Product Image
+                        </label>
+                        
+                        {!imagePreview ? (
+                            /* Show upload area */
+                            <div className="border-2 border-dashed border-purple-700/20 rounded-lg p-6 text-center hover:border-purple-700/40 transition-colors">
+                                <label htmlFor="imageInput" className="cursor-pointer">
+                                    <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
+                                    <p className="text-sm text-gray-600 mb-1">
+                                        Click to upload or drag and drop
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                        PNG, JPG, WEBP up to 5MB
+                                    </p>
+                                </label>
+                                <input
+                                    id="imageInput"
+                                    type="file"
+                                    accept="image/*"
+                                    name="image"
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                />
+                            </div>
+                        ) : (
+                            // Show image preview
+                            <div className="relative border-2 border-purple-700/20 rounded-lg p-4">
+                                <img 
+                                    src={imagePreview} 
+                                    alt="Preview" 
+                                    className="w-full h-48 object-cover rounded-lg"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={removeImage}
+                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors"
+                                >
+                                    <X className="h-4 w-4" />
+                                </button>
+                                <p className="text-sm text-gray-600 mt-2 text-center">
+                                    {formData.image?.name}
+                                </p>
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex justify-between">
