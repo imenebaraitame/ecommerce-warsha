@@ -1,5 +1,5 @@
 //import { useNavigate } from 'react-router-dom';
-import { Package, User, Tags, Plus, Pen, Trash2} from "lucide-react";
+import { Package, User, Tags, Plus, Pen, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import ProductModal from "./ProductModal";
 import { API_ENDPOINTS } from "../config/api";
@@ -13,18 +13,18 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        setError('');
-        const response = await axios.get(API_ENDPOINTS.PRODUCTS);
-        setProducts(response.data);
-      } catch (err) {
-        setError('Failed to load products. Please try again.');
-        console.error('Error fetching products:', err);
-      } finally {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await axios.get(API_ENDPOINTS.PRODUCTS);
+      setProducts(response.data);
+    } catch (err) {
+      setError('Failed to load products. Please try again.');
+      console.error('Error fetching products:', err);
+    } finally {
       setLoading(false);
     }
-    };
+  };
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -86,10 +86,13 @@ const Dashboard = () => {
                 <div className="loading">Loading products...</div>
               </div>
               <div className="flex flex-col overflow-hidden rounded-2xl border border-white/5">
-                 {error && <p className="text-red-600">{error}</p>}
+                {error && <p className="text-red-600">{error}</p>}
                 <table className="w-full border-collapse text-left">
                   <thead>
                     <tr className="border-b border-b-purple-300 bg-gray-200">
+                      {/* <th className="px-6 py-4 text-[13px] font-bold tracking-widest text-purple-800 uppercase">
+                        Image
+                      </th> */}
                       <th className="px-6 py-4 text-[13px] font-bold tracking-widest text-purple-800 uppercase">
                         Name
                       </th>
@@ -113,7 +116,23 @@ const Dashboard = () => {
                   <tbody>
                     {products.map((product) => (
                       <tr key={product._id} className="border-b border-b-purple-300 hover:bg-gray-100">
-                        <td className="px-6 py-4">{product.name}</td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            {product.image?.url ? (
+                              <img
+                                src={product.image.url}
+
+                                className="w-12 h-12 object-cover rounded border border-gray-200"
+                              />):(
+                              <div className="w-12 h-12 flex items-center justify-center bg-gray-200 rounded text-gray-500 text-xs">
+                                No Img
+                              </div>
+                              )
+                            }
+
+                            <span className="font-semibold text-gray-800">{product.name}</span>
+                          </div>
+                        </td>
                         <td className="px-6 py-4">{product.description}</td>
                         <td className="px-6 py-4">{product.category}</td>
                         <td className="px-6 py-4">{product.price} DA</td>
@@ -127,7 +146,7 @@ const Dashboard = () => {
                           >
                             <Pen size={16} />
                           </button>
-                          
+
                           <button
                             className="rounded-lg p-2 text-purple-800 transition-all hover:bg-red-500/10 hover:text-red-400"
                             title="Delete"
