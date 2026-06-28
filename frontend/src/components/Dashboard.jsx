@@ -11,6 +11,7 @@ const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState(true);
 
   const fetchProducts = async () => {
     try {
@@ -29,6 +30,15 @@ const Dashboard = () => {
     fetchProducts();
   }, []);
 
+  const deleteProduct = async (id) => {
+    try {
+      await axios.delete(API_ENDPOINTS.PRODUCT_BY_ID(id));
+      setProducts(products.filter((product) => product._id !== id));
+    } catch (error) {
+      console.error("Error deleting product", error);
+    }
+  }
+
   if (loading && products.length === 0) {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 pt-24 flex items-center justify-center">
@@ -42,6 +52,12 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen pt-30 pb-12">
+      {/* Notification */}
+      {notification && (
+        <div className="fixed top-24 right-4 text-white px-6 py-3 rounded-lg shadow-2xl z-50 animate-slideInRight">
+          {notification}
+        </div>
+      )}
       <div className="container mx-auto px-4">
         {/* Admin Container  */}
         <section>
@@ -69,7 +85,7 @@ const Dashboard = () => {
 
             {/* Products Management Section  */}
             <div className="mb-8 rounded-2xl bg-gray-50 p-6 shadow-lg shadow-gray-200">
-              <div className="flex justify-between">
+              <div className="flex justify-between mb-2.5">
                 <h3 className="mb-1 text-[1.2rem] font-bold text-gray-800">
                   Products Management
                 </h3>
@@ -82,17 +98,11 @@ const Dashboard = () => {
                 </button>
               </div>
 
-              <div>
-                <div className="loading">Loading products...</div>
-              </div>
               <div className="flex flex-col overflow-hidden rounded-2xl border border-white/5">
                 {error && <p className="text-red-600">{error}</p>}
                 <table className="w-full border-collapse text-left">
                   <thead>
                     <tr className="border-b border-b-purple-300 bg-gray-200">
-                      {/* <th className="px-6 py-4 text-[13px] font-bold tracking-widest text-purple-800 uppercase">
-                        Image
-                      </th> */}
                       <th className="px-6 py-4 text-[13px] font-bold tracking-widest text-purple-800 uppercase">
                         Name
                       </th>
@@ -150,6 +160,7 @@ const Dashboard = () => {
                           <button
                             className="rounded-lg p-2 text-purple-800 transition-all hover:bg-red-500/10 hover:text-red-400"
                             title="Delete"
+                            onClick={() => deleteProduct(product._id)}
                           >
                             <Trash2 size={16} />
                           </button>
