@@ -216,7 +216,17 @@ const ProductList = () => {
               >
                 <Link to={`/product/${product._id}`}>
                   <div className="h-48 flex items-center justify-center">
-                    <div><p>product image</p></div>
+                    {product.image?.url ? (
+                      <img
+                        src={product.image.url}
+                        alt="product image"
+                        className=" w-60 h-40 rounded object-cover"
+                      />) : (
+                      <div className="w-60 h-40 rounded flex items-center justify-center bg-gray-200 text-gray-500 text-xs">
+                        No Img
+                      </div>
+                    )
+                    }
                   </div>
                 </Link>
 
@@ -240,18 +250,20 @@ const ProductList = () => {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <span className={`text-sm ${product.quantity > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      {product.quantity > 0 ? `${product.quantity} in stock` : 'Out of stock'}
+                  {/* <div className="flex items-center justify-between">
+                    <span
+                      className={` border p-0.5 rounded-b-sm text-sm ${product.quantity <= 0 ? "text-red-400" : ""}`}
+                    >
+                      {product.quantity <= 0 && "Out of stock"}
                     </span>
-                  </div>
+                  </div> */}
 
                   <button
                     onClick={() => handleAddToCart(product._id)}
                     disabled={product.quantity === 0}
                     className={`w-full mt-4 py-3 rounded-lg font-semibold transition-all duration-300 ${product.quantity > 0
-                        ? 'text-white hover:from-purple-600 hover:to-pink-600 shadow-lg bg-purple-600 hover:shadow-indigo-200'
-                        : 'bg-indigo-950 text-slate-400 cursor-not-allowed'
+                      ? 'text-white hover:from-purple-600 hover:to-pink-600 shadow-lg bg-purple-600 hover:shadow-indigo-200'
+                      : 'bg-indigo-950 text-slate-400 cursor-not-allowed'
                       }`}
                   >
                     {product.quantity > 0 ? 'Add to Cart' : 'Out of Stock'}
