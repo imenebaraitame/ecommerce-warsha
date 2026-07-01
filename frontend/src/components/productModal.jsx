@@ -5,19 +5,21 @@ import axios from 'axios';
 
 
 
-function ProductModal({ closeProModal, refreshProducts }) {
+function ProductModal({ product, closeProModal, refreshProducts }) {
 
     const [categories, setCategories] = useState([]);
-    const [imagePreview, setImagePreview] = useState(null);
+    const [imagePreview, setImagePreview] = useState(product?.image?.url || null);
     const [formData, setFormData] = useState({
-        name: "",
-        price: "",
-        category: "",
-        description: "",
-        quantity: "",
+        name: product?.name || "",
+        price: product?.price || "",
+        category: product?.category || "",
+        description: product?.description || "",
+        quantity: product?.quantity || "",
         image: null
     }
     );
+    const [imageRemoved, setImageRemoved] = useState(false)
+    const isEditMode = Boolean(product);
     
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -54,6 +56,7 @@ function ProductModal({ closeProModal, refreshProducts }) {
     const removeImage = () => {
         setFormData(values => ({ ...values, image: null }));
         setImagePreview(null);
+        setImageRemoved(true);
         // Reset the file input
         const fileInput = document.querySelector('input[type="file"]');
         if (fileInput) fileInput.value = '';
@@ -73,10 +76,21 @@ function ProductModal({ closeProModal, refreshProducts }) {
 
             if (formData.image) {
                 submitData.append('image', formData.image);
+            } else if (isEditMode && imageRemoved) {
+                submitData.append('removeImage', 'true');
             }
-            await axios.post(API_ENDPOINTS.PRODUCTS, submitData, {
-                headers: { "Content-Type": "multipart/form-data"  },
-            });
+            
+            if (isEditMode) {
+                await axios.put(API_ENDPOINTS.PRODUCT_BY_ID(product._id), submitData,
+                    {
+                        headers: { "Content-Type": "multipart/form-data" },
+                    }
+                );
+            } else {
+                await axios.post(API_ENDPOINTS.PRODUCTS, submitData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+            }
                 refreshProducts();
                 closeProModal(false);   
         } catch (e) {
@@ -89,7 +103,9 @@ function ProductModal({ closeProModal, refreshProducts }) {
         <div className="bg-opacity-25 fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/50 sm:p-6">
             <div className="relative w-full max-w-125 overflow-hidden rounded-4xl border border-white/10 bg-white p-7 shadow-2xl max-h-[90vh] overflow-y-auto">
                 <div className="flex justify-between">
-                    <h2 className="mb-6 text-[1.4rem] font-bold">Add New Product</h2>
+                    <h2 className="mb-6 text-[1.4rem] font-bold">
+                        {isEditMode ? "Edit Product" : "Add New Product"}
+                    </h2>
                     <button
                         className="text-black hover:text-purple-700"
                         onClick={() => closeProModal(false)}
@@ -195,7 +211,7 @@ function ProductModal({ closeProModal, refreshProducts }) {
                         </label>
                         
                         {!imagePreview ? (
-                            /* Show upload area */
+                            /*  No image — show upload area*/
                             <div className="border-2 border-dashed border-purple-700/20 rounded-lg p-6 text-center hover:border-purple-700/40 transition-colors">
                                 <label htmlFor="imageInput" className="cursor-pointer">
                                     <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
@@ -216,7 +232,7 @@ function ProductModal({ closeProModal, refreshProducts }) {
                                 />
                             </div>
                         ) : (
-                            // Show image preview
+                            // Has image (existing or newly picked) — show preview
                             <div className="relative border-2 border-purple-700/20 rounded-lg p-4">
                                 <img 
                                     src={imagePreview} 
@@ -231,7 +247,7 @@ function ProductModal({ closeProModal, refreshProducts }) {
                                     <X className="h-4 w-4" />
                                 </button>
                                 <p className="text-sm text-gray-600 mt-2 text-center">
-                                    {formData.image?.name}
+                                    {formData.image?.name || (isEditMode && "Current image")}
                                 </p>
                             </div>
                         )}
@@ -242,7 +258,7 @@ function ProductModal({ closeProModal, refreshProducts }) {
                             type="submit"
                             className="w-40 rounded-lg bg-purple-500 p-2 text-white font-medium text-[1.1rem] cursor-pointer  hover:bg-purple-700"
                         >
-                            Save product
+                            {isEditMode ? "Update product" : "Save product"}
                         </button>
                         <button
                             type="button"

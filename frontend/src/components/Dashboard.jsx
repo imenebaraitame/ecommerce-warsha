@@ -12,6 +12,7 @@ const Dashboard = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState(true);
+  const [editingProduct, setEditingProduct] = useState(null);
 
   const fetchProducts = async () => {
     try {
@@ -152,7 +153,10 @@ const Dashboard = () => {
                           <button
                             className="rounded-lg p-2 text-purple-800 transition-all hover:bg-emerald-500/10 hover:text-emerald-400"
                             title="Edit"
-                            onClick={() => { setOpenProModal(true) }}
+                            onClick={() => { 
+                              setOpenProModal(true);
+                              setEditingProduct(product);
+                             }}
                           >
                             <Pen size={16} />
                           </button>
@@ -169,7 +173,13 @@ const Dashboard = () => {
                     ))}
                   </tbody>
                 </table>
-                {openProModal && <ProductModal closeProModal={setOpenProModal} refreshProducts={fetchProducts} />}
+                {openProModal && (
+                  <ProductModal 
+                      product={editingProduct}
+                      closeProModal={() => { setOpenProModal(false); setEditingProduct(null);} }
+                      refreshProducts={fetchProducts} 
+                  />
+                )}
               </div>
             </div>
 

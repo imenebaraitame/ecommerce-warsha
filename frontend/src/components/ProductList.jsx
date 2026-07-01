@@ -249,15 +249,7 @@ const ProductList = () => {
                       {product.category}
                     </span>
                   </div>
-
-                  {/* <div className="flex items-center justify-between">
-                    <span
-                      className={` border p-0.5 rounded-b-sm text-sm ${product.quantity <= 0 ? "text-red-400" : ""}`}
-                    >
-                      {product.quantity <= 0 && "Out of stock"}
-                    </span>
-                  </div> */}
-
+                  
                   <button
                     onClick={() => handleAddToCart(product._id)}
                     disabled={product.quantity === 0}
