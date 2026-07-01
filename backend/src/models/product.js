@@ -31,12 +31,10 @@ const productSchema = new mongoose.Schema(
     },
     image: {
       url: {
-        type: String,
-        default: null
+        type: String
       },
       publicId: {
-        type: String,
-        default: null
+        type: String
       }
     }
   },
