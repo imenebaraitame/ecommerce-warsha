@@ -141,6 +141,12 @@ const updateProduct = async(req, res, next) => {
         url: req.file.path,
         publicId: req.file.filename
       };
+    } else if (req.body.removeImage === 'true') {
+      // User explicitly removed the image and didn't upload a new one
+      if (product.image && product.image.publicId) {
+        await cloudinary.uploader.destroy(product.image.publicId);
+      }
+      product.image = undefined;
     }
 
     const updatedProduct = await product.save();
