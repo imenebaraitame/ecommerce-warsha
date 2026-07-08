@@ -6,8 +6,10 @@ import axios from 'axios';
 
 
 function ProductModal({ product, closeProModal, refreshProducts }) {
-
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
     const [categories, setCategories] = useState([]);
+    const [imageError, setImageError] = useState('');
     const [imagePreview, setImagePreview] = useState(product?.image?.url || null);
     const [formData, setFormData] = useState({
         name: product?.name || "",
@@ -38,19 +40,38 @@ function ProductModal({ product, closeProModal, refreshProducts }) {
     useEffect(() => {
         fetchCategories();
     }, []);
+    
+    const processImageFile = (file) => {
 
+        if (!ALLOWED_TYPES.includes(file.type)) {
+            setImageError('Please upload a JPEG, PNG, WEBP, or GIF image.');
+            return;
+        }
+        if (file.size > MAX_FILE_SIZE) {
+            setImageError('Image must be smaller than 5MB.');
+            return;
+        }
+
+        setImageError(null);
+        setFormData(values => ({ ...values, image: file }));
+
+        const reader = new FileReader();
+        reader.onloadend = () => setImagePreview(reader.result);
+        reader.onerror = () => setImageError('Could not read the selected file.');
+        reader.readAsDataURL(file);
+    };
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-       //Todo: validate file type
-       //Todo: validate file size
-       setFormData(values => ({ ...values, image: file })); 
-       if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result);
-            };
-            reader.readAsDataURL(file);
-       }
+      // setFormData(values => ({ ...values, image: file })); 
+    //    if (file) {
+    //         const reader = new FileReader();
+    //         reader.onloadend = () => {
+    //             setImagePreview(reader.result);
+    //         };
+    //         reader.readAsDataURL(file);
+    //    }
+        if (!file) return;
+        processImageFile(file);
     }
 
     const removeImage = () => {
@@ -97,6 +118,29 @@ function ProductModal({ product, closeProModal, refreshProducts }) {
             console.error("Error submitting product:", e);
         }
     }
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+
+        const file = e.dataTransfer.files?.[0];
+        if (!file) return;
+
+        processImageFile(file);
+    };
 
 
     return (
@@ -212,7 +256,11 @@ function ProductModal({ product, closeProModal, refreshProducts }) {
                         
                         {!imagePreview ? (
                             /*  No image — show upload area*/
-                            <div className="border-2 border-dashed border-purple-700/20 rounded-lg p-6 text-center hover:border-purple-700/40 transition-colors">
+                            <div
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                                className="border-2 border-dashed border-purple-700/20 rounded-lg p-6 text-center hover:border-purple-700/40 transition-colors">
                                 <label htmlFor="imageInput" className="cursor-pointer">
                                     <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
                                     <p className="text-sm text-gray-600 mb-1">
