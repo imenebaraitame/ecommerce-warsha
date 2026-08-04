@@ -2,15 +2,15 @@ import { Navigate, BrowserRouter as Router, Routes, Route } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
-import ProductList from './components/ProductList';
-import ProductDetail from './components/ProductDetail';
-import Cart from './components/Cart';
-import Login from './components/Login';
-import Signup from './components/Signup';
-import Categories from './components/Categories';
-import Dashboard from './components/Dashboard';
+import Shop from './pages/shop';
+import ProductDetail from './pages/ProductDetail';
+import Cart from './pages/Cart';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Categories from './pages/Categories';
+import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
-import Home from './components/Home';
+import Home from './pages/Home';
 import './styles/index.css'
 
 
@@ -28,7 +28,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
-                <Route path="/productList" element={<ProductList />} />
+                <Route path="/shop" element={<Shop />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/cart" element={<Cart />} />

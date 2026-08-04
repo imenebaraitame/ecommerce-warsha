@@ -5,7 +5,7 @@ import { API_ENDPOINTS } from '../config/api';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
-const ProductList = () => {
+const Shop = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -250,4 +250,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default Shop;

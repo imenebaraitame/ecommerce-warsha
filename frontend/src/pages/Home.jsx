@@ -1,5 +1,5 @@
 import React from "react";
-import EmblaCarousel from "./EmblaCarousel";
+import EmblaCarousel from "../components/EmblaCarousel";
 
 const Home = () => {
   return (

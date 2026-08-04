@@ -1,7 +1,7 @@
 //import { useNavigate } from 'react-router-dom';
 import { Package, User, Tags, Plus, Pen, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
-import ProductModal from "./ProductModal";
+import ProductModal from "../components/ProductModal";
 import { API_ENDPOINTS } from "../config/api";
 import axios from "axios";
 
