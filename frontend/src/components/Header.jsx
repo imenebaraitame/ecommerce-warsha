@@ -57,7 +57,7 @@ const Header = () => {
               HOME
             </Link>
             <Link
-              to="/productList"
+              to="/shop"
               className="text-inverse-surface text-sm font-medium tracking-[0.25em] transition-colors duration-300 hover:text-primary"
             >
               SHOP
