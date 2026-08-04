@@ -62,14 +62,6 @@ function ProductModal({ product, closeProModal, refreshProducts }) {
     };
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-      // setFormData(values => ({ ...values, image: file })); 
-    //    if (file) {
-    //         const reader = new FileReader();
-    //         reader.onloadend = () => {
-    //             setImagePreview(reader.result);
-    //         };
-    //         reader.readAsDataURL(file);
-    //    }
         if (!file) return;
         processImageFile(file);
     }
@@ -122,19 +114,16 @@ function ProductModal({ product, closeProModal, refreshProducts }) {
     const handleDragOver = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        setIsDragging(true);
     };
 
     const handleDragLeave = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        setIsDragging(false);
     };
 
     const handleDrop = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        setIsDragging(false);
 
         const file = e.dataTransfer.files?.[0];
         if (!file) return;

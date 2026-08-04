@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
+import { UserRound } from "lucide-react";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,68 +20,73 @@ const Header = () => {
     };
 
     if (isMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isMenuOpen]);
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
     setIsMenuOpen(false);
   };
 
   const cartCount = getCartItemsCount();
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-slate-50 text-black z-50 shadow-2xl border-b border-purple-500/30">
+    <header className="fixed top-0 right-0 left-0 z-50 border-b border-[#a79a80] bg-white/10 text-black shadow-2xl backdrop-blur-md">
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link
             to="/"
-            className="text-3xl font-bold bg-clip-text text-black hover:scale-105 transition-transform duration-300"
+            className="font-display text-inverse-surface text-3xl font-semibold tracking-[0.08em]"
           >
-            Shop
+            AURELIA
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden items-center space-x-8 md:flex">
             <Link
               to="/"
-              className="text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
+              className="text-inverse-surface text-sm font-medium tracking-[0.25em] transition-colors duration-300 hover:text-primary"
             >
-              Shop
+              HOME
+            </Link>
+            <Link
+              to="/productList"
+              className="text-inverse-surface text-sm font-medium tracking-[0.25em] transition-colors duration-300 hover:text-primary"
+            >
+              SHOP
             </Link>
             <Link
               to="/categories"
-              className="text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
+              className="text-inverse-surface text-sm font-medium tracking-[0.25em] transition-colors duration-300 hover:text-primary"
             >
-              Categories
+              ABOUT
             </Link>
-            
+
             {/* Show Dashboard only for admin users */}
             {isAuthenticated && user?.role === "admin" && (
               <Link
                 to="/dashboard"
-                className="text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
+                className="text-inverse-surface text-sm font-medium tracking-[0.25em] transition-colors duration-300 hover:text-primary"
               >
-                Dashboard
+                DASHBOARD
               </Link>
             )}
 
             {isAuthenticated ? (
-
               <>
                 <Link
                   to="/cart"
-                  className="relative hover:scale-110 transition-transform duration-300"
+                  className="relative transition-transform duration-300 hover:scale-110"
                 >
                   <svg
-                    className="w-7 h-7"
+                    className="h-7 w-7"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -93,7 +99,7 @@ const Header = () => {
                     />
                   </svg>
                   {cartCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-xs font-bold text-white">
                       {cartCount}
                     </span>
                   )}
@@ -101,10 +107,11 @@ const Header = () => {
                 <div className="relative" ref={menuRef}>
                   <button
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    className="flex items-center space-x-2 text-lg hover:text-purple-300 transition-colors duration-300 font-medium">
+                    className="flex items-center space-x-2 text-lg font-medium transition-colors duration-300 hover:text-purple-300"
+                  >
                     <span>{user?.name}</span>
                     <svg
-                      className="w-4 h-4"
+                      className="h-4 w-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -118,12 +125,10 @@ const Header = () => {
                     </svg>
                   </button>
                   {isMenuOpen && (
-                    <div
-                      className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl transition-all duration-300 border border-purple-500/30 z-50"
-                    >
+                    <div className="absolute right-0 z-50 mt-2 w-48 rounded-lg border border-purple-500/30 bg-white shadow-xl transition-all duration-300">
                       <button
                         onClick={handleLogout}
-                        className="block w-full text-left px-4 py-3 text-sm hover:bg-gray-200/30 transition-colors rounded-lg"
+                        className="block w-full rounded-lg px-4 py-3 text-left text-sm transition-colors hover:bg-gray-200/30"
                       >
                         Logout
                       </button>
@@ -135,16 +140,16 @@ const Header = () => {
               <>
                 <Link
                   to="/login"
-                  className="text-lg hover:text-purple-300 transition-colors font-medium"
+                  className="text-inverse-surface text-[2px] font-medium transition-colors hover:text-primary"
                 >
-                  Login
+                  <UserRound size={20} />
                 </Link>
-                <Link
+                {/* <Link
                   to="/signup"
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-2 rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-300 font-semibold shadow-lg hover:shadow-pink-500/50"
+                  className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-2 font-semibold shadow-lg transition-all duration-300 hover:from-purple-600 hover:to-pink-600 hover:shadow-pink-500/50"
                 >
                   Sign Up
-                </Link>
+                </Link> */}
               </>
             )}
           </div>
@@ -152,10 +157,10 @@ const Header = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden focus:outline-none"
+            className="focus:outline-none md:hidden"
           >
             <svg
-              className="w-7 h-7"
+              className="h-7 w-7"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -181,25 +186,25 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 space-y-4 animate-fadeIn">
+          <div className="animate-fadeIn mt-4 space-y-4 pb-4 md:hidden">
             <Link
               to="/"
               onClick={() => setIsMenuOpen(false)}
-              className="block text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
+              className="text-l block font-medium transition-colors duration-300 hover:text-primary"
             >
               Shop
             </Link>
             <Link
               to="/categories"
               onClick={() => setIsMenuOpen(false)}
-              className="block text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
+              className="text-l block font-medium transition-colors duration-300 hover:text-primary"
             >
               Categories
             </Link>
             <Link
               to="/dashboard"
               onClick={() => setIsMenuOpen(false)}
-              className="block text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
+              className="text-l block font-medium transition-colors duration-300 hover:text-primary"
             >
               Dashboard
             </Link>
@@ -209,20 +214,22 @@ const Header = () => {
                 <Link
                   to="/cart"
                   onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center space-x-2 text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
+                  className="flex items-center space-x-2 text-lg font-medium transition-colors duration-300 hover:text-primary"
                 >
                   <span>Cart</span>
                   {cartCount > 0 && (
-                    <span className="bg-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-xs font-bold text-white">
                       {cartCount}
                     </span>
                   )}
                 </Link>
-                <div className="pt-2 border-t border-purple-500/30">
-                  <p className="text-sm text-purple-300 mb-2">Welcome, {user?.name}</p>
+                <div className="border-t border-purple-500/30 pt-2">
+                  <p className="mb-2 text-sm text-primary">
+                    Welcome, {user?.name}
+                  </p>
                   <button
                     onClick={handleLogout}
-                    className="text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
+                    className="text-l font-medium transition-colors duration-300 hover:text-primary"
                   >
                     Logout
                   </button>
@@ -233,16 +240,9 @@ const Header = () => {
                 <Link
                   to="/login"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block text-lg hover:text-purple-300 transition-colors duration-300 font-medium"
+                  className="text-l block font-medium transition-colors duration-300 hover:text-primary"
                 >
                   Login
-                </Link>
-                <Link
-                  to="/signup"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-2 rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-300 font-semibold shadow-lg"
-                >
-                  Sign Up
                 </Link>
               </>
             )}

@@ -10,7 +10,8 @@ import Signup from './components/Signup';
 import Categories from './components/Categories';
 import Dashboard from './components/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
-import './App.css';
+import Home from './components/Home';
+import './styles/index.css'
 
 
 function App() {
@@ -25,8 +26,9 @@ function App() {
             <div className="min-h-screen">
               <Header />
               <Routes>
-                <Route path="/" element={<ProductList />} />
+                <Route path="/" element={<Home />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="/productList" element={<ProductList />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/cart" element={<Cart />} />

@@ -116,26 +116,6 @@ const ProductList = () => {
       )}
 
       <div className="container mx-auto px-4">
-        {/* Hero Section */}
-        <section
-          className="relative  h-130 bg-cover bg-center flex items-center justify-center"
-          style={{
-            backgroundImage: "url('/hero-img.webp')",
-          }}
-        >
-          {/* Optional overlay for better text contrast */}
-          <div className="absolute inset-0 bg-white/40"></div>
-
-          {/* Content */}
-          <div className="relative text-center mb-12 animate-fadeIn space-y-4">
-            <h1 className="text-6xl font-bold text-slate-900">
-              Discover Amazing Products
-            </h1>
-            <p className="text-xl text-slate-500">
-              Shop the latest trends and find your perfect match
-            </p>
-          </div>
-        </section>
 
         {/* Search and Filters */}
         <div className="p-6 mb-8 mt-4">
