@@ -42,7 +42,7 @@ export function EmblaCarousel() {
           {slides.map((slide, index) => (
             <div
               key={index}
-              className="embla__slide relative h-190 min-w-full bg-cover bg-center"
+              className="embla__slide relative md:h-190 md:min-w-full min-h-[80vh] bg-cover bg-center mt-10"
               style={{
                 backgroundImage: `url(${slide.image})`,
               }}
@@ -54,17 +54,17 @@ export function EmblaCarousel() {
               <div className="relative z-10 flex h-full items-center justify-center">
                 <div className=" flex w-full  flex-col items-center px-6 text-center text-white">
                   <div className="text-white">
-                    <p className="mb-4 text-sm tracking-[0.3em] uppercase">
+                    <p className="mb-4 md:text-sm text-[0.6rem] tracking-[0.3em] uppercase">
                       {slide.subtitle}
                     </p>
 
-                    <h1 className="font-display text-6xl leading-tight mb-10">
+                    <h1 className="font-display md:text-6xl text-3xl leading-tight mb-10">
                       {slide.title}
                     </h1>
 
                     <Link 
                       to="/shop"
-                      className="border border-white px-8 py-4 tracking-widest uppercase transition hover:bg-white hover:text-black">
+                      className="border md:text-xl text-[0.7rem] border-white px-2 py-4 tracking-widest uppercase transition hover:bg-white hover:text-black">
                       {slide.button}
                     </Link>
                   </div>

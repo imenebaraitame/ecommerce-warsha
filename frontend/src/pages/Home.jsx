@@ -33,7 +33,7 @@ const Home = () => {
 
           </div>
 
-          <div className="zoom-wrapper flex flex-col items-center mt-35 ">
+          <div className="zoom-wrapper flex flex-col items-center md:mt-35 ">
             <div className="zoom-clip overflow-hidden">
               <img
                 className="zoom-img w-full max-w-xs object-cover transition-transform duration-[500ms] ease-in-out group-hover:scale-110"
