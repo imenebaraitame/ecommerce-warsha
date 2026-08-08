@@ -131,6 +131,7 @@
   animation: shake 0.4s ease-in-out;
 }
 
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
@@ -188,4 +189,13 @@ button {
 .embla__slide {
   flex: 0 0 100%;
   min-width: 0;
+}
+
+.zoom-img {
+  transition: transform 0.5s ease;
+  will-change: transform;
+}
+
+.zoom-wrapper:hover .zoom-img {
+  transform: scale(1.1);
 }
