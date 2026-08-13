@@ -1,13 +1,14 @@
 import React from "react";
-import EmblaCarousel from "../components/EmblaCarousel";
+import Hero from "../components/Hero";
 import { Link } from "react-router-dom";
+
 
 const Home = () => {
   return (
     <section className="min-h-screen text-neutral-800">
       {/* Hero Section */}
       <section className="pt-1">
-        <EmblaCarousel />
+        <Hero />
       </section>
 
       {/* Rest of page content */}
@@ -85,7 +86,7 @@ const Home = () => {
                   src="./brand-story.webp"
                   alt="story image"
                 
-                  className="zoom-img relative z-10 object-cover blur-[1px] transition-transform duration-[500ms] ease-in-out group-hover:scale-110 md:h-150 md:w-500"
+                  className="zoom-img relative z-10 object-cover blur-[1px] md:h-150 md:w-500"
                 />
               </div>
               <div className="bg-surface-variant absolute -right-9 -bottom-9 h-3/4 w-3/4" />
@@ -109,6 +110,47 @@ const Home = () => {
             </div>
           </section>
         </section>
+
+        {/* Best Sellers Carousel */}
+        <section className="mt-15">
+            <div className="mx-auto mb-12 flex justify-between items-end">
+              <div>
+                <span className="uppercase text-secondary mb-4 block">ESSENTIALS</span>
+                <h2 className="text-sm">The Best Sellers</h2>
+              </div>
+
+              <div className="flex gap-4">
+                <button className="p-2 border"><span>chevron_left</span></button>
+                <button className="p-2 border"><span>chevron_right</span></button>
+              </div>
+
+            </div>
+
+            <div>
+              {/* Product Card 1 */}
+              <div>
+                <div>
+                   <img 
+                      src="bags-home.webp" 
+                      alt="bags"
+                      className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.045]"
+                    />
+                      <div>
+                        <button>ADD TO BAG</button>
+                      </div>
+                 </div>
+
+                <div>
+                  <div>
+                    <p>The Florence Tote</p>
+                    <p>Burgundy Calfskin</p>
+                  </div>
+                  <p>€1,890</p>
+                </div>
+             </div>
+           </div>
+          </section>
+      
       </section>
     </section>
   );

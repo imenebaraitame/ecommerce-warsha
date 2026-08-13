@@ -1,20 +1,20 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { API_ENDPOINTS } from '../config/api';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { API_ENDPOINTS } from "../config/api";
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [notification, setNotification] = useState('');
+  const [error, setError] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [notification, setNotification] = useState("");
 
   const { addToCart } = useCart();
   const { isAuthenticated } = useAuth();
@@ -27,12 +27,12 @@ const Shop = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      setError('');
+      setError("");
       const response = await axios.get(API_ENDPOINTS.PRODUCTS);
       setProducts(response.data);
     } catch (err) {
-      setError('Failed to load products. Please try again.');
-      console.error('Error fetching products:', err);
+      setError("Failed to load products. Please try again.");
+      console.error("Error fetching products:", err);
     } finally {
       setLoading(false);
     }
@@ -43,28 +43,28 @@ const Shop = () => {
       const response = await axios.get(API_ENDPOINTS.CATEGORIES);
       setCategories(response.data);
     } catch (err) {
-      console.error('Error fetching categories:', err);
+      console.error("Error fetching categories:", err);
     }
   };
 
   const handleSearch = async () => {
     try {
       setLoading(true);
-      setError('');
+      setError("");
 
       const params = new URLSearchParams();
-      if (searchQuery) params.append('name', searchQuery);
-      if (selectedCategory) params.append('category', selectedCategory);
-      if (minPrice) params.append('minPrice', minPrice);
-      if (maxPrice) params.append('maxPrice', maxPrice);
+      if (searchQuery) params.append("name", searchQuery);
+      if (selectedCategory) params.append("category", selectedCategory);
+      if (minPrice) params.append("minPrice", minPrice);
+      if (maxPrice) params.append("maxPrice", maxPrice);
 
       const response = await axios.get(
-        `${API_ENDPOINTS.PRODUCTS_SEARCH}?${params.toString()}`
+        `${API_ENDPOINTS.PRODUCTS_SEARCH}?${params.toString()}`,
       );
       setProducts(response.data);
     } catch (err) {
-      setError('Search failed. Please try again.');
-      console.error('Error searching products:', err);
+      setError("Search failed. Please try again.");
+      console.error("Error searching products:", err);
     } finally {
       setLoading(false);
     }
@@ -72,66 +72,65 @@ const Shop = () => {
 
   const handleAddToCart = async (productId) => {
     if (!isAuthenticated) {
-      setNotification('Please login to add items to cart');
-      setTimeout(() => setNotification(''), 3000);
+      setNotification("Please login to add items to cart");
+      setTimeout(() => setNotification(""), 3000);
       return;
     }
 
     const result = await addToCart(productId, 1);
     if (result.success) {
-      setNotification('Added to cart!');
-      setTimeout(() => setNotification(''), 3000);
+      setNotification("Added to cart!");
+      setTimeout(() => setNotification(""), 3000);
     } else {
-      setNotification(result.error || 'Failed to add to cart');
-      setTimeout(() => setNotification(''), 3000);
+      setNotification(result.error || "Failed to add to cart");
+      setTimeout(() => setNotification(""), 3000);
     }
   };
 
   const clearFilters = () => {
-    setSearchQuery('');
-    setSelectedCategory('');
-    setMinPrice('');
-    setMaxPrice('');
+    setSearchQuery("");
+    setSelectedCategory("");
+    setMinPrice("");
+    setMaxPrice("");
     fetchProducts();
   };
 
   if (loading && products.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 pt-24 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 pt-24">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500 mx-auto"></div>
-          <p className="text-white mt-4 text-xl">Loading products...</p>
+          <div className="mx-auto h-16 w-16 animate-spin rounded-full border-t-4 border-b-4 border-purple-500"></div>
+          <p className="mt-4 text-xl text-white">Loading products...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white text-neutral-800 pt-24 pb-12">
+    <div className="min-h-screen bg-white pt-24 pb-12 text-neutral-800">
       {/* Notification */}
       {notification && (
-        <div className="fixed top-24 right-4 text-white px-6 py-3 rounded-lg shadow-2xl z-50 animate-slideInRight">
+        <div className="animate-slideInRight fixed top-24 right-4 z-50 rounded-lg px-6 py-3 text-white shadow-2xl">
           {notification}
         </div>
       )}
 
       <div className="container mx-auto px-4">
-
         {/* Search and Filters */}
-        <div className="p-6 mb-8 mt-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="mt-4 mb-8 p-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
             <input
               type="text"
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="border border-gray-400 px-4 py-3 rounded-lg text-black placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+              className="rounded-lg border border-gray-400 px-4 py-3 text-black placeholder-purple-300 transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none"
             />
 
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="border border-gray-400 px-4 py-3 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+              className="rounded-lg border border-gray-400 px-4 py-3 text-black transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none"
             >
               <option value="">All Categories</option>
               {categories.map((cat) => (
@@ -146,7 +145,7 @@ const Shop = () => {
               placeholder="Min Price"
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
-              className="border border-gray-400 px-4 py-3 rounded-lg text-black placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+              className="rounded-lg border border-gray-400 px-4 py-3 text-black placeholder-purple-300 transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none"
             />
 
             <input
@@ -154,19 +153,19 @@ const Shop = () => {
               placeholder="Max Price"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
-              className=" border border-gray-400 px-4 py-3 rounded-lg text-black placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+              className="rounded-lg border border-gray-400 px-4 py-3 text-black placeholder-purple-300 transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none"
             />
 
             <div className="flex gap-2">
               <button
                 onClick={handleSearch}
-                className=" border border-gray-400 flex-1  text-black px-6 py-3 rounded-lg hover:bg-gray-200 transition-all duration-300 font-semibold"
+                className="flex-1 rounded-lg border border-gray-400 px-6 py-3 font-semibold text-black transition-all duration-300 hover:bg-gray-200"
               >
                 Search
               </button>
               <button
                 onClick={clearFilters}
-                className=" border border-gray-400 px-4 py-3  text-black rounded-lg hover:bg-gray-200 transition-all duration-300"
+                className="rounded-lg border border-gray-400 px-4 py-3 text-black transition-all duration-300 hover:bg-gray-200"
               >
                 Clear
               </button>
@@ -176,70 +175,89 @@ const Shop = () => {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-500/20 border border-red-500 text-red-200 px-6 py-4 rounded-lg mb-8">
+          <div className="mb-8 rounded-lg border border-red-500 bg-red-500/20 px-6 py-4 text-red-200">
             {error}
           </div>
         )}
 
         {/* Products Grid */}
         {products.length === 0 ? (
-          <div className="text-center py-16">
-            <h3 className="text-2xl text-black mb-2">No products found</h3>
+          <div className="py-16 text-center">
+            <h3 className="mb-2 text-2xl text-black">No products found</h3>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products.map((product, index) => (
               <div
                 key={product._id}
-                className="backdrop-blur-lg rounded-xl overflow-hidden shadow-2xl border border-purple-500/30 hover:border-purple-500 transition-all duration-300 animate-fadeInUp"
+                className="group animate-fadeInUp relative w-full max-w-[300px] overflow-hidden transition-all duration-300"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <Link to={`/product/${product._id}`}>
-                  <div className="h-48 flex items-center justify-center">
+                {/* Image frame */}
+                <Link
+                  to={`/product/${product._id}`}
+                  aria-label={`View ${product.name}`}
+                  className="relative block aspect-[4/5] overflow-hidden rounded-[2px] bg-[#EFEAE2] outline-none focus-visible:ring-2 focus-visible:ring-[#1C2331] focus-visible:ring-offset-2"
+                >
                     {product.image?.url ? (
                       <img
                         src={product.image.url}
                         alt="product image"
-                        className=" w-60 h-40 rounded object-cover"
-                      />) : (
-                      <div className="w-60 h-40 rounded flex items-center justify-center bg-gray-200 text-gray-500 text-xs">
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.045]"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-gray-200 text-xs text-gray-500">
                         No Img
                       </div>
-                    )
-                    }
-                  </div>
+                    )}
+
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/15 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                    {product.quantity === 0 && (
+                      <span className="absolute top-3 left-3 bg-[#FAF7F2]/95 px-2.5 py-1 text-[10px] font-medium tracking-[0.14em] text-[#1C2331]">
+                        OUT OF STOCK
+                      </span>
+                    )}
+
+                    {/* Quick add, rises on hover */}
+                    <div className="absolute inset-x-3 bottom-3 translate-y-3 opacity-0 transition-all duration-300 ease-out group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAddToCart(product._id);
+                        }}
+                        disabled={product.quantity === 0}
+                        className={`flex w-full items-center justify-center gap-2 py-3 text-[11px] font-medium tracking-[0.18em] transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#1C2331] focus-visible:ring-offset-2 focus-visible:outline-none ${
+                          product.quantity > 0
+                            ? "bg-[#FAF7F2] text-[#1C2331] hover:bg-white"
+                            : "cursor-not-allowed bg-[#FAF7F2]/70 text-[#1C2331]/40"
+                        }`}
+                      >
+                        {product.quantity > 0 ? "QUICK ADD" : "OUT OF STOCK"}
+                      </button>
+                    </div>
                 </Link>
-
-                <div className="p-6">
-                  <Link to={`/product/${product._id}`}>
-                    <h3 className="text-xl font-bold text-slate-700 mb-2 hover:text-slate-950 transition-colors">
-                      {product.name}
-                    </h3>
-                  </Link>
-
-                  <p className="text-zinc-700 text-sm mb-3 line-clamp-2">
-                    {product.description}
-                  </p>
-
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-bold bg-clip-text text-transparent">
+                {/* Details */}
+                <div className="p-1">
+                  <div className="mb-4 flex justify-between">
+                    <div>
+                      <Link to={`/product/${product._id}`}>
+                        <h3 className="mb-2 text-xl font-bold text-slate-700 transition-colors hover:text-slate-950">
+                          {product.name.toUpperCase()}
+                        </h3>
+                      </Link>
+                      <p className="mb-3 line-clamp-2 text-sm text-zinc-700">
+                        {product.description}
+                      </p>
+                    </div>
+                    <span className="bg-clip-text text-xl font-bold">
                       ${product.price.toFixed(2)}
                     </span>
-                    <span className="text-sm text-blue-900">
-                      {product.category}
-                    </span>
                   </div>
-                  
-                  <button
-                    onClick={() => handleAddToCart(product._id)}
-                    disabled={product.quantity === 0}
-                    className={`w-full mt-4 py-3 rounded-lg font-semibold transition-all duration-300 ${product.quantity > 0
-                      ? 'text-white hover:from-purple-600 hover:to-pink-600 shadow-lg bg-purple-600 hover:shadow-indigo-200'
-                      : 'bg-indigo-950 text-slate-400 cursor-not-allowed'
-                      }`}
-                  >
-                    {product.quantity > 0 ? 'Add to Cart' : 'Out of Stock'}
-                  </button>
+                
+
+                 
                 </div>
               </div>
             ))}

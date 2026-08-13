@@ -15,7 +15,6 @@
   --color-background: var(--color-background);
 
   --color-surface: var(--color-surface);
-  --color-surface-container: var(--color-surface-container);
   --color-surface-variant: var(--color-surface-variant);
   --color-surface-container: var(--color-surface-container);
   --color-surface-dim: var(--color-surface-dim);
@@ -28,7 +27,7 @@
   --color-outline: var(--color-outline);
 
   --color-primary-fixed-dim: var(--color-primary-fixed-dim);
-    --color-on-tertiary-fixed-variant: var(--color-on-tertiary-fixed-variant);
+  --color-on-tertiary-fixed-variant: var(--color-on-tertiary-fixed-variant);
 
   /* Fonts */
 
