@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { API_ENDPOINTS } from "../config/api";
-import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext";
+
 import { ShoppingCart } from "lucide-react";
 import ProductCard from "../components/ProductCard";
+
+import useAddToCart from "../hooks/useAddToCart";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
@@ -16,10 +17,10 @@ const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [notification, setNotification] = useState("");
+  // const [notification, setNotification] = useState("");
+  const { handleAddToCart, notification } = useAddToCart();
 
-  const { addToCart } = useCart();
-  const { isAuthenticated } = useAuth();
+
 
   useEffect(() => {
     fetchProducts();
@@ -69,23 +70,6 @@ const Shop = () => {
       console.error("Error searching products:", err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleAddToCart = async (productId) => {
-    if (!isAuthenticated) {
-      setNotification("Please login to add items to cart");
-      setTimeout(() => setNotification(""), 3000);
-      return;
-    }
-
-    const result = await addToCart(productId, 1);
-    if (result.success) {
-      setNotification("Added to cart!");
-      setTimeout(() => setNotification(""), 3000);
-    } else {
-      setNotification(result.error || "Failed to add to cart");
-      setTimeout(() => setNotification(""), 3000);
     }
   };
 
