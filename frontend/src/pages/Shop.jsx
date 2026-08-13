@@ -4,6 +4,7 @@ import axios from "axios";
 import { API_ENDPOINTS } from "../config/api";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { ShoppingCart } from "lucide-react";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
@@ -110,7 +111,7 @@ const Shop = () => {
     <div className="min-h-screen bg-white pt-24 pb-12 text-neutral-800">
       {/* Notification */}
       {notification && (
-        <div className="animate-slideInRight fixed top-24 right-4 z-50 rounded-lg px-6 py-3 text-white shadow-2xl">
+        <div className="animate-slideInRight fixed top-24 right-4 z-50 rounded-lg bg-white px-6 py-3 text-black shadow-2xl">
           {notification}
         </div>
       )}
@@ -197,67 +198,55 @@ const Shop = () => {
                 <Link
                   to={`/product/${product._id}`}
                   aria-label={`View ${product.name}`}
-                  className="relative block aspect-[4/5] overflow-hidden rounded-[2px] bg-[#EFEAE2] outline-none focus-visible:ring-2 focus-visible:ring-[#1C2331] focus-visible:ring-offset-2"
+                  className="relative block aspect-[5/6] overflow-hidden rounded-[2px] bg-[#EFEAE2] outline-none focus-visible:ring-2 focus-visible:ring-[#1C2331] focus-visible:ring-offset-2"
                 >
-                    {product.image?.url ? (
-                      <img
-                        src={product.image.url}
-                        alt="product image"
-                        loading="lazy"
-                        className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.045]"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-gray-200 text-xs text-gray-500">
-                        No Img
-                      </div>
-                    )}
-
-                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/15 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                    {product.quantity === 0 && (
-                      <span className="absolute top-3 left-3 bg-[#FAF7F2]/95 px-2.5 py-1 text-[10px] font-medium tracking-[0.14em] text-[#1C2331]">
-                        OUT OF STOCK
-                      </span>
-                    )}
-
-                    {/* Quick add, rises on hover */}
-                    <div className="absolute inset-x-3 bottom-3 translate-y-3 opacity-0 transition-all duration-300 ease-out group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleAddToCart(product._id);
-                        }}
-                        disabled={product.quantity === 0}
-                        className={`flex w-full items-center justify-center gap-2 py-3 text-[11px] font-medium tracking-[0.18em] transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#1C2331] focus-visible:ring-offset-2 focus-visible:outline-none ${
-                          product.quantity > 0
-                            ? "bg-[#FAF7F2] text-[#1C2331] hover:bg-white"
-                            : "cursor-not-allowed bg-[#FAF7F2]/70 text-[#1C2331]/40"
-                        }`}
-                      >
-                        {product.quantity > 0 ? "QUICK ADD" : "OUT OF STOCK"}
-                      </button>
+                  {product.image?.url ? (
+                    <img
+                      src={product.image.url}
+                      alt={product.name}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.045]"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gray-200 text-xs text-gray-500">
+                      No Img
                     </div>
+                  )}
+
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/15 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                  {product.quantity === 0 && (
+                    <span className="absolute top-3 left-3 bg-[#FAF7F2]/95 px-2.5 py-1 text-[10px] font-medium tracking-[0.14em] text-[#1C2331]">
+                      OUT OF STOCK
+                    </span>
+                  )}
                 </Link>
                 {/* Details */}
-                <div className="p-1">
-                  <div className="mb-4 flex justify-between">
-                    <div>
-                      <Link to={`/product/${product._id}`}>
-                        <h3 className="mb-2 text-xl font-bold text-slate-700 transition-colors hover:text-slate-950">
-                          {product.name.toUpperCase()}
-                        </h3>
-                      </Link>
-                      <p className="mb-3 line-clamp-2 text-sm text-zinc-700">
-                        {product.description}
-                      </p>
-                    </div>
-                    <span className="bg-clip-text text-xl font-bold">
+                <div className="pt-4">
+                  <Link to={`/product/${product._id}`}>
+                    <h3 className="text-inverse-surface text-[16px] tracking-[0.06em] transition-colors">
+                      {product.name.toUpperCase()}
+                    </h3>
+                  </Link>
+                  <p className="line-clamp-1 text-[12.5px] text-outline capitalize">
+                    {product.description}
+                  </p>
+                  <div className="flex justify-between">
+                    <p className="text-inverse-surface mt-1.5 text-[16px]">
                       ${product.price.toFixed(2)}
-                    </span>
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => handleAddToCart(product._id)}
+                      disabled={product.quantity === 0}
+                      className={`rounded-2xl border px-3.5 tracking-[0.18em] transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
+                        product.quantity > 0
+                          ? "border-inverse-surface text-inverse-surface hover:bg-inverse-surface hover:text-surface focus-visible:ring-inverse-surface"
+                          : "cursor-not-allowed border-[#D8D2C6] text-[#B8B2A6]"
+                      }`}
+                    >
+                      <ShoppingCart className="size-5" />
+                    </button>
                   </div>
-                
-
-                 
                 </div>
               </div>
             ))}
