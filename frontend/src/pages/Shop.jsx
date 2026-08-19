@@ -1,76 +1,48 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { API_ENDPOINTS } from "../config/api";
 
 import { ShoppingCart } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 
 import useAddToCart from "../hooks/useAddToCart";
+import { useCategories } from "../hooks/useCategories";
+import { useProductSearch } from "../hooks/useProductSearch";
+import { useProducts } from "../hooks/useProducts";
 
 const Shop = () => {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  // const [notification, setNotification] = useState("");
   const { handleAddToCart, notification } = useAddToCart();
+  const [searchFilters, setSearchFilters] = useState(null);
+  const {
+    data: allProducts = [],
+    isFetching: loadingAll,
+    error: allError,
+  } = useProducts();
 
+  const {
+    data: searchResults = [],
+    isFetching: loadingSearch,
+    error: searchError,
+  } = useProductSearch(searchFilters);
 
+  const { data: categories = [], isLoading: categoriesLoading } =
+    useCategories();
 
-  useEffect(() => {
-    fetchProducts();
-    fetchCategories();
-  }, []);
+  const products = searchFilters ? searchResults : allProducts;
+  const loading = searchFilters ? loadingSearch : loadingAll;
+  const error = searchFilters ? searchError : allError;
 
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      const response = await axios.get(API_ENDPOINTS.PRODUCTS);
-      setProducts(response.data);
-    } catch (err) {
-      setError("Failed to load products. Please try again.");
-      console.error("Error fetching products:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const response = await axios.get(API_ENDPOINTS.CATEGORIES);
-      setCategories(response.data);
-    } catch (err) {
-      console.error("Error fetching categories:", err);
-    }
-  };
-
-  const handleSearch = async () => {
-    try {
-      setLoading(true);
-      setError("");
-
-      const params = new URLSearchParams();
-      if (searchQuery) params.append("name", searchQuery);
-      if (selectedCategory) params.append("category", selectedCategory);
-      if (minPrice) params.append("minPrice", minPrice);
-      if (maxPrice) params.append("maxPrice", maxPrice);
-
-      const response = await axios.get(
-        `${API_ENDPOINTS.PRODUCTS_SEARCH}?${params.toString()}`,
-      );
-      setProducts(response.data);
-    } catch (err) {
-      setError("Search failed. Please try again.");
-      console.error("Error searching products:", err);
-    } finally {
-      setLoading(false);
-    }
+  const handleSearch = () => {
+    setSearchFilters({
+      name: searchQuery,
+      category: selectedCategory,
+      minPrice: minPrice || undefined,
+      maxPrice: maxPrice || undefined,
+    });
   };
 
   const clearFilters = () => {
@@ -78,7 +50,7 @@ const Shop = () => {
     setSelectedCategory("");
     setMinPrice("");
     setMaxPrice("");
-    fetchProducts();
+    // fetchProducts();
   };
 
   if (loading && products.length === 0) {
